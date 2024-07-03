@@ -17,13 +17,13 @@
       "name" : "p4calc_t",
       "id" : 1,
       "fields" : [
-        ["P", 8, false],
+        ["p", 8, false],
         ["four", 8, false],
         ["ver", 8, false],
         ["op", 8, false],
         ["operand_a", 32, false],
         ["operand_b", 32, false],
-        ["result", 32, false]
+        ["res", 32, false]
       ]
     },
     {
@@ -201,7 +201,7 @@
               "parameters" : [
                 {
                   "type" : "field",
-                  "value" : ["tmp_0", "P"]
+                  "value" : ["tmp_0", "p"]
                 },
                 {
                   "type" : "expression",
@@ -477,7 +477,7 @@
               "parameters" : [
                 {
                   "type" : "field",
-                  "value" : ["tmp_0", "result"]
+                  "value" : ["tmp_0", "res"]
                 },
                 {
                   "type" : "expression",
@@ -530,7 +530,7 @@
               "parameters" : [
                 {
                   "type" : "field",
-                  "value" : ["tmp_2", "P"]
+                  "value" : ["tmp_2", "p"]
                 },
                 {
                   "type" : "expression",
@@ -806,7 +806,7 @@
               "parameters" : [
                 {
                   "type" : "field",
-                  "value" : ["tmp_2", "result"]
+                  "value" : ["tmp_2", "res"]
                 },
                 {
                   "type" : "expression",
@@ -859,7 +859,7 @@
               "parameters" : [
                 {
                   "type" : "field",
-                  "value" : ["tmp_4", "P"]
+                  "value" : ["tmp_4", "p"]
                 },
                 {
                   "type" : "expression",
@@ -1135,7 +1135,7 @@
               "parameters" : [
                 {
                   "type" : "field",
-                  "value" : ["tmp_4", "result"]
+                  "value" : ["tmp_4", "res"]
                 },
                 {
                   "type" : "expression",
@@ -1359,7 +1359,7 @@
       "id" : 0,
       "source_info" : {
         "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-        "line" : 227,
+        "line" : 152,
         "column" : 8,
         "source_fragment" : "MyDeparser"
       },
@@ -1383,7 +1383,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["p4calc", "result"]
+              "value" : ["p4calc", "res"]
             },
             {
               "type" : "expression",
@@ -1415,9 +1415,9 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 146,
+            "line" : 80,
             "column" : 8,
-            "source_fragment" : "hdr.p4calc.result = result; ..."
+            "source_fragment" : "hdr.p4calc.res = result; ..."
           }
         },
         {
@@ -1434,7 +1434,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 147,
+            "line" : 81,
             "column" : 8,
             "source_fragment" : "bit<48> temp = hdr.ethernet.dstAddr;"
           }
@@ -1453,7 +1453,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 148,
+            "line" : 82,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.dstAddr = hdr.ethernet.srcAddr"
           }
@@ -1472,7 +1472,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 149,
+            "line" : 83,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.srcAddr = temp"
           }
@@ -1491,7 +1491,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 150,
+            "line" : 84,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = standard_metadata.ingress_port"
           }
@@ -1508,7 +1508,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["p4calc", "result"]
+              "value" : ["p4calc", "res"]
             },
             {
               "type" : "expression",
@@ -1540,9 +1540,9 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 146,
+            "line" : 80,
             "column" : 8,
-            "source_fragment" : "hdr.p4calc.result = result; ..."
+            "source_fragment" : "hdr.p4calc.res = result; ..."
           }
         },
         {
@@ -1559,7 +1559,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 147,
+            "line" : 81,
             "column" : 8,
             "source_fragment" : "bit<48> temp = hdr.ethernet.dstAddr;"
           }
@@ -1578,7 +1578,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 148,
+            "line" : 82,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.dstAddr = hdr.ethernet.srcAddr"
           }
@@ -1597,7 +1597,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 149,
+            "line" : 83,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.srcAddr = temp"
           }
@@ -1616,7 +1616,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 150,
+            "line" : 84,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = standard_metadata.ingress_port"
           }
@@ -1633,7 +1633,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["p4calc", "result"]
+              "value" : ["p4calc", "res"]
             },
             {
               "type" : "expression",
@@ -1655,9 +1655,9 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 146,
+            "line" : 80,
             "column" : 8,
-            "source_fragment" : "hdr.p4calc.result = result; ..."
+            "source_fragment" : "hdr.p4calc.res = result; ..."
           }
         },
         {
@@ -1674,7 +1674,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 147,
+            "line" : 81,
             "column" : 8,
             "source_fragment" : "bit<48> temp = hdr.ethernet.dstAddr;"
           }
@@ -1693,7 +1693,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 148,
+            "line" : 82,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.dstAddr = hdr.ethernet.srcAddr"
           }
@@ -1712,7 +1712,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 149,
+            "line" : 83,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.srcAddr = temp"
           }
@@ -1731,7 +1731,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 150,
+            "line" : 84,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = standard_metadata.ingress_port"
           }
@@ -1748,7 +1748,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["p4calc", "result"]
+              "value" : ["p4calc", "res"]
             },
             {
               "type" : "expression",
@@ -1770,9 +1770,9 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 146,
+            "line" : 80,
             "column" : 8,
-            "source_fragment" : "hdr.p4calc.result = result; ..."
+            "source_fragment" : "hdr.p4calc.res = result; ..."
           }
         },
         {
@@ -1789,7 +1789,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 147,
+            "line" : 81,
             "column" : 8,
             "source_fragment" : "bit<48> temp = hdr.ethernet.dstAddr;"
           }
@@ -1808,7 +1808,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 148,
+            "line" : 82,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.dstAddr = hdr.ethernet.srcAddr"
           }
@@ -1827,7 +1827,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 149,
+            "line" : 83,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.srcAddr = temp"
           }
@@ -1846,7 +1846,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 150,
+            "line" : 84,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = standard_metadata.ingress_port"
           }
@@ -1863,7 +1863,7 @@
           "parameters" : [
             {
               "type" : "field",
-              "value" : ["p4calc", "result"]
+              "value" : ["p4calc", "res"]
             },
             {
               "type" : "expression",
@@ -1885,9 +1885,9 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 146,
+            "line" : 80,
             "column" : 8,
-            "source_fragment" : "hdr.p4calc.result = result; ..."
+            "source_fragment" : "hdr.p4calc.res = result; ..."
           }
         },
         {
@@ -1904,7 +1904,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 147,
+            "line" : 81,
             "column" : 8,
             "source_fragment" : "bit<48> temp = hdr.ethernet.dstAddr;"
           }
@@ -1923,7 +1923,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 148,
+            "line" : 82,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.dstAddr = hdr.ethernet.srcAddr"
           }
@@ -1942,7 +1942,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 149,
+            "line" : 83,
             "column" : 8,
             "source_fragment" : "hdr.ethernet.srcAddr = temp"
           }
@@ -1961,7 +1961,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 150,
+            "line" : 84,
             "column" : 8,
             "source_fragment" : "standard_metadata.egress_spec = standard_metadata.ingress_port"
           }
@@ -1983,7 +1983,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 174,
+            "line" : 108,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -2005,7 +2005,7 @@
           ],
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 174,
+            "line" : 108,
             "column" : 8,
             "source_fragment" : "mark_to_drop(standard_metadata)"
           }
@@ -2019,7 +2019,7 @@
       "id" : 0,
       "source_info" : {
         "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-        "line" : 142,
+        "line" : 76,
         "column" : 8,
         "source_fragment" : "MyIngress"
       },
@@ -2030,7 +2030,7 @@
           "id" : 0,
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 177,
+            "line" : 111,
             "column" : 10,
             "source_fragment" : "calculate"
           },
@@ -2069,7 +2069,7 @@
             {
               "source_info" : {
                 "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-                "line" : 191,
+                "line" : 125,
                 "column" : 12,
                 "source_fragment" : "P4CALC_PLUS : operation_add()"
               },
@@ -2088,9 +2088,9 @@
             {
               "source_info" : {
                 "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-                "line" : 192,
+                "line" : 126,
                 "column" : 12,
-                "source_fragment" : "P4CALC_MINUS : operation_sub()"
+                "source_fragment" : "P4CALC_MINUS: operation_sub()"
               },
               "match_key" : [
                 {
@@ -2107,7 +2107,7 @@
             {
               "source_info" : {
                 "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-                "line" : 193,
+                "line" : 127,
                 "column" : 12,
                 "source_fragment" : "P4CALC_AND : operation_and()"
               },
@@ -2126,7 +2126,7 @@
             {
               "source_info" : {
                 "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-                "line" : 194,
+                "line" : 128,
                 "column" : 12,
                 "source_fragment" : "P4CALC_OR : operation_or()"
               },
@@ -2145,9 +2145,9 @@
             {
               "source_info" : {
                 "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-                "line" : 195,
+                "line" : 129,
                 "column" : 12,
-                "source_fragment" : "P4CALC_CARET : operation_xor()"
+                "source_fragment" : "P4CALC_CARET: operation_xor()"
               },
               "match_key" : [
                 {
@@ -2168,7 +2168,7 @@
           "id" : 1,
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 203,
+            "line" : 137,
             "column" : 12,
             "source_fragment" : "operation_drop()"
           },
@@ -2200,7 +2200,7 @@
           "id" : 0,
           "source_info" : {
             "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-            "line" : 200,
+            "line" : 134,
             "column" : 12,
             "source_fragment" : "hdr.p4calc.isValid()"
           },
@@ -2225,7 +2225,7 @@
       "id" : 1,
       "source_info" : {
         "filename" : "/home/p4/beadando/P4BinaryAdder/calc.p4",
-        "line" : 211,
+        "line" : 142,
         "column" : 8,
         "source_fragment" : "MyEgress"
       },

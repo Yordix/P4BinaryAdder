@@ -13,15 +13,13 @@ from scapy.all import (
 
 class P4calc(Packet):
     name = "P4calc"
-    fields_desc = [ 
-        StrFixedLenField("P", "P", length=1),
-        StrFixedLenField("Four", "4", length=1),
-        XByteField("version", 0x01),
-        StrFixedLenField("op", "+", length=1),
-        IntField("operand_a", 0),
-        IntField("operand_b", 0),
-        IntField("result", 0xDEADBABE)
-    ]
+    fields_desc = [ StrFixedLenField("P", "P", length=1),
+                    StrFixedLenField("Four", "4", length=1),
+                    XByteField("version", 0x01),
+                    StrFixedLenField("op", "+", length=1),
+                    IntField("operand_a", 0),
+                    IntField("operand_b", 0),
+                    IntField("result", 0xDEADBABE)]
 
 bind_layers(Ether, P4calc, type=0x1234)
 
@@ -32,62 +30,78 @@ class OpParseError(Exception):
     pass
 
 class Token:
-    def __init__(self, type, value=None):
-        self.type = type
-        self.value = value
+    def __init__(self, s, kind):
+        self.s = s
+        self.kind = kind
 
-def num_parser(s, i, ts):
-    pattern = "^\s*([0-9]+)\s*"
-    match = re.match(pattern, s[i:])
-    if match:
-        ts.append(Token('num', match.group(1)))
-        return i + match.end(), ts
-    raise NumParseError('Expected number literal.')
+    def __repr__(self):
+        return f'{self.kind}: {self.s}'
 
-def op_parser(s, i, ts):
-    pattern = "^\s*([-+&|^])\s*"
-    match = re.match(pattern, s[i:])
-    if match:
-        ts.append(Token('num', match.group(1)))
-        return i + match.end(), ts
-    raise NumParseError("Expected binary operator '-', '+', '&', '|', or '^'.")
+    def __str__(self):
+        return self.s
 
-def make_seq(p1, p2):
-    def parse(s, i, ts):
-        i, ts2 = p1(s, i, ts)
-        return p2(s, i, ts2)
-    return parse
+def lex(s):
+    for m in re.finditer(r'(0b[01]+|[+&|^])', s):
+        s = m.group(0)
+        if re.match(r'0b[01]+', s):
+            yield Token(s, 'NUM')
+        elif re.match(r'[+&|^]', s):
+            yield Token(s, 'OP')
+        else:
+            raise ValueError('Unexpected match')
+
+def parse(tokens):
+    a = next(tokens)
+    if a.kind != 'NUM':
+        raise NumParseError(f'Expected NUM, got {a}')
+    a = int(a.s, 2)
+
+    op = next(tokens)
+    if op.kind != 'OP':
+        raise OpParseError(f'Expected OP, got {op}')
+    op = str(op)
+
+    b = next(tokens)
+    if b.kind != 'NUM':
+        raise NumParseError(f'Expected NUM, got {b}')
+    b = int(b.s, 2)
+
+    return a, op, b
 
 def main():
-    p = make_seq(num_parser, make_seq(op_parser, num_parser))
-    s = ''
-    iface = 'h1-eth0'  # Update this with the correct interface name
-
+    print('Binary Adder')
     while True:
-        s = input('> ')
-        if s == "quit":
-            break
-        print(s)
         try:
-            i, ts = p(s, 0, [])
-            pkt = Ether(dst='00:04:00:00:00:00', type=0x1234) / P4calc(
-                op=ts[1].value,
-                operand_a=int(ts[0].value),
-                operand_b=int(ts[2].value)
-            )
-            # Print the packet for debugging
-            pkt.show()
-            resp = srp1(pkt, iface=iface, timeout=1, verbose=False)
+            s = input('> ')
+            if s == 'exit':
+                break
+
+            tokens = lex(s)
+            a, op, b = parse(tokens)
+
+            op_map = {
+                '+': '+',
+                '&': '&',
+                '|': '|',
+                '^': '^',
+            }
+
+            ether = Ether(src='00:00:00:00:00:01', dst='ff:ff:ff:ff:ff:ff')
+            p4calc = P4calc(op=op_map[op], operand_a=a, operand_b=b)
+
+            pkt = ether / p4calc
+
+            print(f'Sending: {bin(a)} {op} {bin(b)}')
+            resp = srp1(pkt, iface='h1-eth0', timeout=1, verbose=False)
             if resp:
-                p4calc = resp[P4calc]
-                if p4calc:
-                    print(f"Result: {p4calc.result}")
-                else:
-                    print("Cannot find P4calc header in the packet")
+                result = resp[P4calc].result
+                print(f'Result: {bin(result)}')
             else:
-                print("Didn't receive response")
-        except Exception as error:
-            print(error)
+                print("Didn't receive a response")
+        except (NumParseError, OpParseError) as e:
+            print(f'Error: {e}')
+        except Exception as e:
+            print(f'Unexpected error: {e}')
 
 if __name__ == '__main__':
     main()
