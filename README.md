@@ -72,6 +72,10 @@ sudo tcpdump -i h1-eth0
 ### Decimal numbers
 ![Proof about working](./image.png)
 
+
+\>0b0100 + 0b0010
+0b110
+
 ### Binary numbers
 ![Binary nums](./binary.png)
 
