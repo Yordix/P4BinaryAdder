@@ -1,9 +1,9 @@
 /* -*- P4_16 -*- */
 
 /*
- * P4 4-bit Binary Adder
+ * P4 Calculator
  *
- * This program implements a simple 4-bit binary adder protocol. It can be carried over Ethernet
+ * This program implements a simple protocol. It can be carried over Ethernet
  * (Ethertype 0x1234).
  *
  * The Protocol header looks like this:
@@ -12,25 +12,29 @@
  * +----------------+----------------+----------------+---------------+
  * |      P         |       4        |     Version    |     Op        |
  * +----------------+----------------+----------------+---------------+
- * | 0000           | 0000           |      0000      |    0000       |
+ * |                              Operand A                           |
  * +----------------+----------------+----------------+---------------+
- * |                              Operand A (4 bits)                  |
+ * |                              Operand B                           |
  * +----------------+----------------+----------------+---------------+
- * |                              Operand B (4 bits)                  |
- * +----------------+----------------+----------------+---------------+
- * |                              Result (4 bits)                     |
+ * |                              Result                              |
  * +----------------+----------------+----------------+---------------+
  *
  * P is an ASCII Letter 'P' (0x50)
  * 4 is an ASCII Letter '4' (0x34)
  * Version is currently 0.1 (0x01)
- * Op is always addition for this example (0x2b)
+ * Op is an operation to Perform:
+ *   '+' (0x2b) Result = OperandA + OperandB
+ *   '-' (0x2d) Result = OperandA - OperandB
+ *   '&' (0x26) Result = OperandA & OperandB
+ *   '|' (0x7c) Result = OperandA | OperandB
+ *   '^' (0x5e) Result = OperandA ^ OperandB
  *
- * The device receives a packet, performs the addition, fills in the
+ * The device receives a packet, performs the requested operation, fills in the
  * result and sends the packet back out of the same port it came in on, while
  * swapping the source and destination addresses.
  *
- * If the header is not valid, the packet is dropped.
+ * If an unknown operation is specified or the header is not valid, the packet
+ * is dropped
  */
 
 #include <core.p4>
@@ -50,23 +54,27 @@ header ethernet_t {
 }
 
 /*
- * This is a custom protocol header for the 4-bit binary adder.
- * We'll use etherType 0x1234 for it (see parser)
+ * This is a custom protocol header for the calculator. We'll use
+ * etherType 0x1234 for it (see parser)
  */
 const bit<16> P4CALC_ETYPE = 0x1234;
 const bit<8>  P4CALC_P     = 0x50;   // 'P'
 const bit<8>  P4CALC_4     = 0x34;   // '4'
 const bit<8>  P4CALC_VER   = 0x01;   // v0.1
-const bit<8>  P4CALC_OP    = 0x2b;   // '+'
+const bit<8>  P4CALC_PLUS  = 0x2b;   // '+'
+const bit<8>  P4CALC_MINUS = 0x2d;   // '-'
+const bit<8>  P4CALC_AND   = 0x26;   // '&'
+const bit<8>  P4CALC_OR    = 0x7c;   // '|'
+const bit<8>  P4CALC_CARET = 0x5e;   // '^'
 
 header p4calc_t {
-    bit<8>  p;
+    bit<8>  P;
     bit<8>  four;
     bit<8>  ver;
     bit<8>  op;
-    bit<4>  operand_a;
-    bit<4>  operand_b;
-    bit<4>  res;
+    bit<32> operand_a;
+    bit<32> operand_b;
+    bit<32> result;
 }
 
 /*
@@ -80,11 +88,12 @@ struct headers {
 }
 
 /*
- * All metadata, globally used in the program, also  needs to be assembled
+ * All metadata, globally used in the program, also needs to be assembled
  * into a single struct. As in the case of the headers, we only need to
  * declare the type, but there is no need to instantiate it,
  * because it is done "by the architecture", i.e. outside of P4 functions
  */
+
 struct metadata {
     /* In our case it is empty */
 }
@@ -105,12 +114,11 @@ parser MyParser(packet_in packet,
     }
 
     state check_p4calc {
-        transition select(packet.lookahead<p4calc_t>().p,
+        transition select(packet.lookahead<p4calc_t>().P,
                           packet.lookahead<p4calc_t>().four,
-                          packet.lookahead<p4calc_t>().ver,
-                          packet.lookahead<p4calc_t>().op) {
-            (P4CALC_P, P4CALC_4, P4CALC_VER, P4CALC_OP) : parse_p4calc;
-            default                                     : accept;
+                          packet.lookahead<p4calc_t>().ver) {
+            (P4CALC_P, P4CALC_4, P4CALC_VER) : parse_p4calc;
+            default                          : accept;
         }
     }
 
@@ -134,20 +142,32 @@ control MyVerifyChecksum(inout headers hdr,
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
-    action send_back(bit<4> result) {
-        hdr.p4calc.res = result;
-
-        // Swap MAC addresses
+    action send_back(bit<32> result) {
+        hdr.p4calc.result = result;
         bit<48> temp = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = hdr.ethernet.srcAddr;
         hdr.ethernet.srcAddr = temp;
-
-        // Send the packet back to the port it came from
         standard_metadata.egress_spec = standard_metadata.ingress_port;
     }
 
     action operation_add() {
         send_back(hdr.p4calc.operand_a + hdr.p4calc.operand_b);
+    }
+
+    action operation_sub() {
+        send_back(hdr.p4calc.operand_a - hdr.p4calc.operand_b);
+    }
+
+    action operation_and() {
+        send_back(hdr.p4calc.operand_a & hdr.p4calc.operand_b);
+    }
+
+    action operation_or() {
+        send_back(hdr.p4calc.operand_a | hdr.p4calc.operand_b);
+    }
+
+    action operation_xor() {
+        send_back(hdr.p4calc.operand_a ^ hdr.p4calc.operand_b);
     }
 
     action operation_drop() {
@@ -160,11 +180,19 @@ control MyIngress(inout headers hdr,
         }
         actions = {
             operation_add;
+            operation_sub;
+            operation_and;
+            operation_or;
+            operation_xor;
             operation_drop;
         }
         const default_action = operation_drop();
         const entries = {
-            P4CALC_OP : operation_add();
+            P4CALC_PLUS  : operation_add();
+            P4CALC_MINUS : operation_sub();
+            P4CALC_AND   : operation_and();
+            P4CALC_OR    : operation_or();
+            P4CALC_CARET : operation_xor();
         }
     }
 
@@ -204,7 +232,7 @@ control MyDeparser(packet_out packet, in headers hdr) {
 }
 
 /*************************************************************************
- ***********************  S W I T T C H **********************************
+ ***********************  S W I T C H ************************************
  *************************************************************************/
 
 V1Switch(
